@@ -28,9 +28,9 @@ export default function UserStores() {
   async function handleRating(storeId, rating) {
     try {
       await api.post("/ratings", { storeId, rating });
-      loadStores(); // reload after rating
+      loadStores();
     } catch (err) {
-        console.error(err);
+      console.error(err);
       alert("Failed to submit rating");
     }
   }
@@ -39,86 +39,131 @@ export default function UserStores() {
     loadStores();
   }, []);
 
-  if (loading) return <p>Loading stores...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center mt-10">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
 
   return (
-    <div style={{ maxWidth: "900px", margin: "20px auto" }}>
-      <h2>All Stores</h2>
+    <div className="max-w-6xl mx-auto p-6">
+      <h2 className="text-3xl font-bold mb-6 text-center">All Stores</h2>
 
-      {/* Search Section */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-        <input
-          placeholder="Search by name"
-          value={search.name}
-          onChange={(e) => setSearch({ ...search, name: e.target.value })}
-        />
-        <input
-          placeholder="Search by address"
-          value={search.address}
-          onChange={(e) => setSearch({ ...search, address: e.target.value })}
-        />
-        <button onClick={loadStores}>Search</button>
+      {/* Search Box Card */}
+      <div className="card bg-base-100 shadow-md mb-6">
+        <div className="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <div>
+            <label className="label">
+              <span className="label-text">Store Name</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              placeholder="Search name"
+              value={search.name}
+              onChange={(e) => setSearch({ ...search, name: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="label">
+              <span className="label-text">Address</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              placeholder="Search address"
+              value={search.address}
+              onChange={(e) => setSearch({ ...search, address: e.target.value })}
+            />
+          </div>
+
+          <div className="flex gap-3 md:items-end">
+            <button className="btn btn-primary w-1/2" onClick={loadStores}>Search</button>
+            <button
+              className="btn btn-ghost w-1/2"
+              onClick={() => {
+                setSearch({ name: "", address: "" });
+              }}
+            >
+              Reset
+            </button>
+          </div>
+
+        </div>
       </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* Error Alert */}
+      {error && (
+        <div className="alert alert-error mb-4">
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Table */}
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginTop: "10px"
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={th}>Store Name</th>
-            <th style={th}>Address</th>
-            <th style={th}>Overall Rating</th>
-            <th style={th}>Your Rating</th>
-            <th style={th}>Action</th>
-          </tr>
-        </thead>
+      <div className="card bg-base-100 shadow-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="table w-full table-zebra">
+            <thead className="bg-base-300 font-semibold">
+              <tr>
+                <th>Store</th>
+                <th>Address</th>
+                <th>Overall Rating</th>
+                <th>Your Rating</th>
+                <th>Rate</th>
+              </tr>
+            </thead>
 
-        <tbody>
-          {stores.map((store) => (
-            <tr key={store.id}>
-              <td style={td}>{store.name}</td>
-              <td style={td}>{store.address}</td>
-              <td style={td}>{store.overall_rating}</td>
-              <td style={td}>{store.user_rating || "Not rated"}</td>
-              <td style={td}>
-                <select
-                  value={store.user_rating || ""}
-                  onChange={(e) =>
-                    handleRating(store.id, Number(e.target.value))
-                  }
-                >
-                  <option value="">Rate</option>
-                  {[1, 2, 3, 4, 5].map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            <tbody>
+              {stores.map((store) => (
+                <tr key={store.id} className="hover:bg-base-200">
 
-      {stores.length === 0 && <p>No stores found.</p>}
+                  <td className="font-medium">{store.name}</td>
+
+                  <td>{store.address}</td>
+
+                  <td>
+                    <div className="badge badge-info badge-lg p-3">
+                      {store.overall_rating || "0"}
+                    </div>
+                  </td>
+
+                  <td>
+                    <div className="badge badge-ghost badge-lg p-3">
+                      {store.user_rating || "Not rated"}
+                    </div>
+                  </td>
+
+                  <td>
+                    <select
+                      className="select select-bordered w-28"
+                      value={store.user_rating || ""}
+                      onChange={(e) =>
+                        handleRating(store.id, Number(e.target.value))
+                      }
+                    >
+                      <option value="">Rate</option>
+                      {[1, 2, 3, 4, 5].map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Empty state */}
+      {stores.length === 0 && (
+        <p className="text-center text-gray-500 mt-6">No stores found.</p>
+      )}
     </div>
   );
 }
-
-const th = {
-  borderBottom: "1px solid #ccc",
-  padding: "8px",
-  textAlign: "left"
-};
-
-const td = {
-  borderBottom: "1px solid #eee",
-  padding: "8px"
-};

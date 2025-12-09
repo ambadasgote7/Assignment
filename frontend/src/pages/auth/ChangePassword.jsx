@@ -33,6 +33,7 @@ export default function ChangePassword() {
 
       setMessage("Password updated successfully");
       setForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
+      setTimeout(() => setMessage(""), 3000);
 
     } catch (err) {
       setError(err.response?.data?.message || "Failed to change password");
@@ -40,40 +41,83 @@ export default function ChangePassword() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: "40px auto" }}>
-      <h2>Change Password</h2>
+    <div className="min-h-screen flex items-center justify-center bg-base-200 p-6">
+      <div className="card w-full max-w-sm bg-base-100 shadow-xl rounded-2xl">
+        <div className="card-body p-8">
 
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+          <h2 className="text-2xl font-bold text-center mb-4">
+            Change Password
+          </h2>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <input
-          type="password"
-          name="oldPassword"
-          placeholder="Old Password"
-          value={form.oldPassword}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="newPassword"
-          placeholder="New Password"
-          value={form.newPassword}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="confirmNewPassword"
-          placeholder="Confirm New Password"
-          value={form.confirmNewPassword}
-          onChange={handleChange}
-          required
-        />
+          {message && (
+            <div className="alert alert-success mb-4">
+              <span>{message}</span>
+            </div>
+          )}
 
-        <button type="submit">Update Password</button>
-      </form>
+          {error && (
+            <div className="alert alert-error mb-4">
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+
+            <div>
+              <label className="label">
+                <span className="label-text">Old Password</span>
+              </label>
+              <input
+                type="password"
+                name="oldPassword"
+                placeholder="Old Password"
+                required
+                value={form.oldPassword}
+                onChange={handleChange}
+                className="input input-bordered w-full rounded-lg"
+              />
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">New Password</span>
+              </label>
+              <input
+                type="password"
+                name="newPassword"
+                placeholder="New Password"
+                required
+                value={form.newPassword}
+                onChange={handleChange}
+                className="input input-bordered w-full rounded-lg"
+              />
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">Confirm New Password</span>
+              </label>
+              <input
+                type="password"
+                name="confirmNewPassword"
+                placeholder="Confirm New Password"
+                required
+                value={form.confirmNewPassword}
+                onChange={handleChange}
+                className="input input-bordered w-full rounded-lg"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full rounded-lg mt-2"
+            >
+              Update Password
+            </button>
+
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

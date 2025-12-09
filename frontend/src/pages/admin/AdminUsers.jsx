@@ -54,174 +54,261 @@ export default function AdminUsers() {
 
   useEffect(() => {
     loadUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div style={{ maxWidth: 1000, margin: "20px auto" }}>
-      <h2>Manage Users</h2>
+    <div className="max-w-6xl mx-auto p-6 space-y-8">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Manage Users</h1>
+          <p className="text-sm text-base-content/60">Filter, sort, view and create users</p>
+        </div>
 
-      {/* Filters */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
-        <input
-          placeholder="Name"
-          value={filters.name}
-          onChange={(e) => setFilters({ ...filters, name: e.target.value })}
-        />
-        <input
-          placeholder="Email"
-          value={filters.email}
-          onChange={(e) => setFilters({ ...filters, email: e.target.value })}
-        />
-        <input
-          placeholder="Address"
-          value={filters.address}
-          onChange={(e) => setFilters({ ...filters, address: e.target.value })}
-        />
-        <select
-          value={filters.role}
-          onChange={(e) => setFilters({ ...filters, role: e.target.value })}
-        >
-          <option value="">All</option>
-          <option value="USER">User</option>
-          <option value="ADMIN">Admin</option>
-          <option value="OWNER">Owner</option>
-        </select>
+        <div className="flex gap-2">
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setFilters({ name: "", email: "", address: "", role: "" })}
+            title="Clear filter fields (does not reload)"
+          >
+            Clear Fields
+          </button>
 
-        <button onClick={loadUsers}>Filter</button>
+          <button
+            className="btn btn-sm btn-primary"
+            onClick={loadUsers}
+          >
+            Refresh
+          </button>
+        </div>
+      </header>
+
+      {/* Filters & Sort */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="card bg-base-100 shadow">
+          <div className="card-body">
+            <h3 className="card-title">Filters</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
+              <div>
+                <label className="label"><span className="label-text">Name</span></label>
+                <input
+                  className="input input-bordered w-full"
+                  placeholder="Name"
+                  value={filters.name}
+                  onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="label"><span className="label-text">Email</span></label>
+                <input
+                  className="input input-bordered w-full"
+                  placeholder="Email"
+                  value={filters.email}
+                  onChange={(e) => setFilters({ ...filters, email: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="label"><span className="label-text">Address</span></label>
+                <input
+                  className="input input-bordered w-full"
+                  placeholder="Address"
+                  value={filters.address}
+                  onChange={(e) => setFilters({ ...filters, address: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="label"><span className="label-text">Role</span></label>
+                <select
+                  className="select select-bordered w-full"
+                  value={filters.role}
+                  onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+                >
+                  <option value="">All</option>
+                  <option value="USER">User</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="OWNER">Owner</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4 flex gap-3">
+              <button className="btn btn-sm btn-primary" onClick={loadUsers}>Filter</button>
+              <button className="btn btn-sm btn-ghost" onClick={() => setFilters({ name: "", email: "", address: "", role: "" })}>Reset Fields</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="card bg-base-100 shadow">
+          <div className="card-body">
+            <h3 className="card-title">Sorting</h3>
+
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4 mt-2">
+              <div className="w-full">
+                <label className="label"><span className="label-text">Sort By</span></label>
+                <select
+                  className="select select-bordered w-full"
+                  value={sort.sortBy}
+                  onChange={(e) => setSort({ ...sort, sortBy: e.target.value })}
+                >
+                  <option value="name">Name</option>
+                  <option value="email">Email</option>
+                  <option value="role">Role</option>
+                  <option value="created_at">Created At</option>
+                </select>
+              </div>
+
+              <div className="w-full sm:w-40">
+                <label className="label"><span className="label-text">Direction</span></label>
+                <select
+                  className="select select-bordered w-full"
+                  value={sort.sortDir}
+                  onChange={(e) => setSort({ ...sort, sortDir: e.target.value })}
+                >
+                  <option value="asc">ASC</option>
+                  <option value="desc">DESC</option>
+                </select>
+              </div>
+
+              <div className="flex gap-2 mt-2 sm:mt-0">
+                <button className="btn btn-primary btn-sm" onClick={loadUsers}>Sort</button>
+                <button className="btn btn-sm btn-ghost" onClick={() => setSort({ sortBy: "name", sortDir: "asc" })}>Reset Sort</button>
+              </div>
+            </div>
+
+            <p className="text-xs text-base-content/60 mt-4">Tip: change sort options then click <span className="font-medium">Sort</span>.</p>
+          </div>
+        </div>
       </div>
 
-      {/* Sorting */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-        <select
-          value={sort.sortBy}
-          onChange={(e) => setSort({ ...sort, sortBy: e.target.value })}
-        >
-          <option value="name">Name</option>
-          <option value="email">Email</option>
-          <option value="role">Role</option>
-          <option value="created_at">Created At</option>
-        </select>
-
-        <select
-          value={sort.sortDir}
-          onChange={(e) => setSort({ ...sort, sortDir: e.target.value })}
-        >
-          <option value="asc">ASC</option>
-          <option value="desc">DESC</option>
-        </select>
-
-        <button onClick={loadUsers}>Sort</button>
+      {/* Users Table */}
+      <div className="card bg-base-100 shadow overflow-auto">
+        <div className="card-body p-0">
+          <div className="overflow-x-auto">
+            <table className="table w-full">
+              <thead className="bg-base-300">
+                <tr>
+                  <th className="pl-6">Name</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Role</th>
+                  <th className="text-right pr-6">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-base-200">
+                    <td className="pl-6 font-medium">{u.name}</td>
+                    <td>{u.email}</td>
+                    <td className="max-w-xs truncate">{u.address}</td>
+                    <td>
+                      <span className={`badge ${u.role === "ADMIN" ? "badge-primary" : u.role === "OWNER" ? "badge-accent" : "badge-ghost"}`}>
+                        {u.role}
+                      </span>
+                    </td>
+                    <td className="text-right pr-6">
+                      <button className="btn btn-sm btn-outline" onClick={() => handleView(u.id)}>View</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      {/* Table */}
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={th}>Name</th>
-            <th style={th}>Email</th>
-            <th style={th}>Address</th>
-            <th style={th}>Role</th>
-            <th style={th}>Action</th>
-          </tr>
-        </thead>
+      {users.length === 0 && <p className="text-center text-gray-500">No users found.</p>}
 
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id}>
-              <td style={td}>{u.name}</td>
-              <td style={td}>{u.email}</td>
-              <td style={td}>{u.address}</td>
-              <td style={td}>{u.role}</td>
-              <td style={td}>
-                <button onClick={() => handleView(u.id)}>View</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {users.length === 0 && <p>No users found.</p>}
-
-      {/* User Details Modal */}
+      {/* View User Modal (DaisyUI modal) */}
       {viewUser && (
-        <div style={modal}>
-          <div style={modalContent}>
-            <h3>User Details</h3>
-            <p><b>Name:</b> {viewUser.name}</p>
-            <p><b>Email:</b> {viewUser.email}</p>
-            <p><b>Address:</b> {viewUser.address}</p>
-            <p><b>Role:</b> {viewUser.role}</p>
+        <div className="modal modal-open">
+          <div className="modal-box max-w-md">
+            <h3 className="font-bold text-lg">User Details</h3>
+            <div className="mt-4 space-y-2">
+              <p><strong>Name:</strong> {viewUser.name}</p>
+              <p><strong>Email:</strong> {viewUser.email}</p>
+              <p><strong>Address:</strong> {viewUser.address}</p>
+              <p>
+                <strong>Role:</strong>{" "}
+                <span className={`badge ${viewUser.role === "ADMIN" ? "badge-primary" : viewUser.role === "OWNER" ? "badge-accent" : "badge-ghost"}`}>
+                  {viewUser.role}
+                </span>
+              </p>
 
-            {viewUser.role === "OWNER" && (
-              <p><b>Store Rating:</b> {viewUser.rating || "No ratings yet"}</p>
-            )}
+              {viewUser.role === "OWNER" && (
+                <p><strong>Store Rating:</strong> {viewUser.rating || "No ratings yet"}</p>
+              )}
+            </div>
 
-            <button onClick={() => setViewUser(null)}>Close</button>
+            <div className="modal-action">
+              <button className="btn" onClick={() => setViewUser(null)}>Close</button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Create User Form */}
-      <h3 style={{ marginTop: "30px" }}>Create User</h3>
+      <div className="card bg-base-100 shadow">
+        <div className="card-body">
+          <h3 className="card-title">Create User</h3>
 
-      <form
-        onSubmit={handleCreateUser}
-        style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: 400 }}
-      >
-        <input
-          placeholder="Name"
-          value={newUser.name}
-          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-          required
-        />
-        <input
-          placeholder="Email"
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          required
-        />
-        <input
-          placeholder="Address"
-          value={newUser.address}
-          onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
-          required
-        />
-        <input
-          placeholder="Password"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-          required
-        />
-        <select
-          value={newUser.role}
-          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-        >
-          <option value="USER">User</option>
-          <option value="ADMIN">Admin</option>
-          <option value="OWNER">Owner</option>
-        </select>
+          <form onSubmit={handleCreateUser} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+            <input
+              placeholder="Name"
+              value={newUser.name}
+              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+              required
+              className="input input-bordered w-full"
+            />
+            <input
+              placeholder="Email"
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              required
+              className="input input-bordered w-full"
+            />
+            <input
+              placeholder="Address"
+              value={newUser.address}
+              onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
+              required
+              className="input input-bordered w-full"
+            />
+            <input
+              placeholder="Password"
+              type="password"
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              required
+              className="input input-bordered w-full"
+            />
 
-        <button type="submit">Create User</button>
-      </form>
+            <select
+              className="select select-bordered w-full"
+              value={newUser.role}
+              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+            >
+              <option value="USER">User</option>
+              <option value="ADMIN">Admin</option>
+              <option value="OWNER">Owner</option>
+            </select>
+
+            <div className="md:col-span-2 flex gap-3 justify-end mt-2">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => setNewUser({ name: "", email: "", address: "", password: "", role: "USER" })}
+              >
+                Reset
+              </button>
+
+              <button type="submit" className="btn btn-primary">Create User</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
-
-const th = { padding: "8px", borderBottom: "1px solid #ccc", textAlign: "left" };
-const td = { padding: "8px", borderBottom: "1px solid #eee" };
-
-const modal = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.4)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center"
-};
-
-const modalContent = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "6px",
-  minWidth: "300px"
-};

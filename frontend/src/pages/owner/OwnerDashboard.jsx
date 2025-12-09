@@ -22,78 +22,133 @@ export default function OwnerDashboard() {
     loadDashboard();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
 
   return (
-    <div style={{ maxWidth: "1000px", margin: "20px auto" }}>
-      <h2>Owner Dashboard</h2>
+    <div className="max-w-7xl mx-auto p-6 space-y-10">
 
-      {/* OWNER'S STORES */}
-      <h3 style={{ marginTop: "20px" }}>Your Stores</h3>
+      {/* ---------- DASHBOARD HEADER ---------- */}
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-3">Owner Dashboard</h1>
+        <p className="text-base-content/60 text-sm">
+          Manage your stores & view customer feedback
+        </p>
+      </div>
 
-      {stores.length === 0 ? (
-        <p>You do not own any stores yet.</p>
-      ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "30px" }}>
-          <thead>
-            <tr>
-              <th style={th}>Store Name</th>
-              <th style={th}>Address</th>
-              <th style={th}>Average Rating</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stores.map((store) => (
-              <tr key={store.id}>
-                <td style={td}>{store.name}</td>
-                <td style={td}>{store.address}</td>
-                <td style={td}>{Number(store.avg_rating || 0).toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {/* ---------- KPI CARDS ---------- */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      {/* RATINGS RECEIVED */}
-      <h3>Ratings Received</h3>
+        <div className="card bg-primary text-primary-content shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Total Stores</h2>
+            <p className="text-4xl font-bold">{stores.length}</p>
+          </div>
+        </div>
 
-      {ratings.length === 0 ? (
-        <p>No ratings for your stores yet.</p>
-      ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={th}>Store</th>
-              <th style={th}>User Name</th>
-              <th style={th}>User Email</th>
-              <th style={th}>Rating</th>
-              <th style={th}>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ratings.map((r) => (
-              <tr key={r.id}>
-                <td style={td}>{r.store_name}</td>
-                <td style={td}>{r.user_name}</td>
-                <td style={td}>{r.user_email}</td>
-                <td style={td}>{r.rating}</td>
-                <td style={td}>{new Date(r.created_at).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        <div className="card bg-secondary text-secondary-content shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Total Ratings</h2>
+            <p className="text-4xl font-bold">{ratings.length}</p>
+          </div>
+        </div>
+
+        <div className="card bg-accent text-accent-content shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Avg Store Rating</h2>
+            <p className="text-4xl font-bold">
+              {stores.length === 0
+                ? "0.0"
+                : (
+                    stores.reduce((sum, s) => sum + (parseFloat(s.avg_rating) || 0), 0) /
+                    stores.length
+                  ).toFixed(2)}
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ---------- YOUR STORES ---------- */}
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="text-2xl font-semibold mb-4">Your Stores</h2>
+
+          {stores.length === 0 ? (
+            <p className="text-center text-gray-500 py-4">You do not own any stores yet.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-xl">
+              <table className="table table-zebra w-full">
+                <thead className="bg-base-300 text-base font-semibold">
+                  <tr>
+                    <th>Store</th>
+                    <th>Address</th>
+                    <th>Avg Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stores.map((store) => (
+                    <tr key={store.id}>
+                      <td>{store.name}</td>
+                      <td>{store.address}</td>
+                      <td>
+                        <span className="badge badge-lg badge-primary p-3">
+                          {Number(store.avg_rating || 0).toFixed(2)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ---------- RATINGS RECEIVED ---------- */}
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="text-2xl font-semibold mb-4">Ratings Received</h2>
+
+          {ratings.length === 0 ? (
+            <p className="text-center text-gray-500 py-4">No ratings for your stores yet.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-xl">
+              <table className="table w-full">
+                <thead className="bg-base-300 text-base font-semibold">
+                  <tr>
+                    <th>Store</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Rating</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ratings.map((r) => (
+                    <tr key={r.id}>
+                      <td>{r.store_name}</td>
+                      <td>{r.user_name}</td>
+                      <td>{r.user_email}</td>
+                      <td>
+                        <span className="badge badge-lg badge-secondary p-3">
+                          {r.rating}
+                        </span>
+                      </td>
+                      <td>{new Date(r.created_at).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }
-
-const th = {
-  padding: "8px",
-  borderBottom: "1px solid #ccc",
-  textAlign: "left"
-};
-
-const td = {
-  padding: "8px",
-  borderBottom: "1px solid #eee"
-};
